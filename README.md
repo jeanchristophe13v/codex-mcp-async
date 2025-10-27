@@ -8,7 +8,7 @@ Enable Claude Code to call Codex (GPT-5) asynchronously, filtering out thinking 
 
 - ✅ **Async execution** - Start Codex tasks in background, continue working
 - ✅ **Context-efficient** - Filters thinking/exec logs, returns only core results
-- ✅ **Full control** - Access all Codex subcommands and arguments
+- ✅ **Full control** - Access all Codex models and reasoning efforts
 - ✅ **Zero config** - Works out of the box with Claude Code
 
 ## Quick Start
@@ -21,7 +21,7 @@ Enable Claude Code to call Codex (GPT-5) asynchronously, filtering out thinking 
 ### 2. Install
 
 ```bash
-git clone https://github.com/yourusername/codex-mcp-async.git
+git clone https://github.com/jeanchristophe13v/codex-mcp-async.git
 cd codex-mcp-async
 chmod +x codex_mcp_server.py
 ```
@@ -50,13 +50,25 @@ Reload or restart Claude Code to load the MCP server.
 
 ## Usage
 
-### Synchronous execution
+### Basic examples
 
 ```python
-# In Claude Code conversation
+# Coding task (uses gpt-5-codex by default)
 mcp__codex_mcp__codex_execute(
     prompt="Write a Python function to calculate fibonacci",
     args=["--full-auto"]
+)
+
+# Analysis task with gpt-5
+mcp__codex_mcp__codex_execute(
+    prompt="Analyze this dataset pattern",
+    args=["--full-auto", "-m", "gpt-5"]
+)
+
+# Complex task with high reasoning
+mcp__codex_mcp__codex_execute(
+    prompt="Design a distributed caching system",
+    args=["--full-auto", "--config", "model_reasoning_effort=high"]
 )
 ```
 
@@ -66,7 +78,7 @@ mcp__codex_mcp__codex_execute(
 # Start task in background
 task = mcp__codex_mcp__codex_execute_async(
     prompt="Analyze large dataset",
-    args=["--full-auto"]
+    args=["--full-auto", "-m", "gpt-5"]
 )
 # Returns: Task ID: abc123
 
@@ -85,7 +97,7 @@ Synchronous execution. Blocks until Codex completes.
 **Parameters:**
 - `subcommand` (str): `exec`, `apply`, `resume`, `sandbox` (default: `exec`)
 - `prompt` (str): Task description
-- `args` (list): Additional CLI arguments (e.g., `["--full-auto", "-m", "o3"]`)
+- `args` (list): CLI arguments (see Model & Reasoning section)
 - `timeout` (int): Optional timeout in seconds
 
 ### `codex_execute_async`
@@ -94,7 +106,7 @@ Start background task, return immediately.
 **Parameters:**
 - `subcommand` (str): Same as above
 - `prompt` (str): Task description
-- `args` (list): Additional CLI arguments
+- `args` (list): CLI arguments
 
 **Returns:** Task ID for later retrieval
 
@@ -108,29 +120,67 @@ Check async task status.
 - `running`: Task still in progress
 - `completed`: Task finished with result
 
+## Model & Reasoning Configuration
+
+### Models
+
+**`gpt-5-codex` (default)**
+- Best for: Coding, implementation, debugging
+- Reasoning efforts: `low`, `medium` (default), `high`
+
+**`gpt-5`**
+- Best for: Analysis, planning, research
+- Reasoning efforts: `minimal`, `low`, `medium` (default), `high`
+
+### How to configure
+
+```python
+# Specify model
+args=["-m", "gpt-5"]
+
+# Specify reasoning effort
+args=["--config", "model_reasoning_effort=high"]
+
+# Combine both
+args=["-m", "gpt-5", "--config", "model_reasoning_effort=minimal"]
+
+# Always include --full-auto for non-interactive execution
+args=["--full-auto", "-m", "gpt-5-codex", "--config", "model_reasoning_effort=low"]
+```
+
+### Recommended combinations
+
+| Task Type | Model | Reasoning | Example Args |
+|-----------|-------|-----------|--------------|
+| Simple code | `gpt-5-codex` | `low` | `["-m", "gpt-5-codex", "--config", "model_reasoning_effort=low"]` |
+| Standard coding | `gpt-5-codex` | `medium` | `["--full-auto"]` (default) |
+| Complex algorithms | `gpt-5-codex` | `high` | `["--full-auto", "--config", "model_reasoning_effort=high"]` |
+| Quick analysis | `gpt-5` | `minimal` | `["-m", "gpt-5", "--config", "model_reasoning_effort=minimal"]` |
+| Deep analysis | `gpt-5` | `high` | `["-m", "gpt-5", "--config", "model_reasoning_effort=high"]` |
+
 ## Examples
 
-### Data analysis
+### Data analysis (async)
 ```python
 mcp__codex_mcp__codex_execute_async(
     prompt="Read data.csv and output {rows, cols, missing_pct} as JSON",
-    args=["--full-auto"]
+    args=["--full-auto", "-m", "gpt-5"]
 )
 ```
 
-### Code generation with stronger model
+### Complex code generation
 ```python
 mcp__codex_mcp__codex_execute(
-    prompt="Write a REST API with FastAPI",
-    args=["--full-auto", "-m", "o3"]
+    prompt="Implement a thread-safe LRU cache in Python",
+    args=["--full-auto", "--config", "model_reasoning_effort=high"]
 )
 ```
 
-### Web search
+### Web search + analysis
 ```python
 mcp__codex_mcp__codex_execute(
-    prompt="Find latest Python best practices 2025",
-    args=["--full-auto", "--search"]
+    prompt="Find and summarize latest FastAPI best practices",
+    args=["--full-auto", "--search", "-m", "gpt-5"]
 )
 ```
 
@@ -141,7 +191,7 @@ Claude Code (you)
     ↓ calls MCP tool
 codex_mcp_server.py
     ↓ spawns background process
-Codex CLI (GPT-5)
+Codex CLI (GPT-5 / GPT-5-Codex)
     ↓ writes to /tmp/codex_tasks/{task_id}.stdout
 codex_mcp_server.py
     ↓ filters thinking logs
@@ -161,22 +211,12 @@ Claude Code (receives clean result)
 - Restart Claude Code
 
 ### Task stuck in "running"
-- Check Codex process: `ps aux | grep codex`
-- View task files: `ls -la /tmp/codex_tasks/`
-- Task timeout: Wait 10s after file stops updating
+- Wait 10s after file stops updating
+- Check task files: `ls -la /tmp/codex_tasks/`
 
-### Zombie processes
-Fixed in v0.2.0 with `start_new_session=True`
-
-## Development
-
-```bash
-# Test server directly
-echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | python3 codex_mcp_server.py
-
-# View task output
-cat /tmp/codex_tasks/{task_id}.stdout
-```
+### Invalid model error
+- Use `gpt-5-codex` or `gpt-5` (not `o3` or other names)
+- Don't append reasoning effort to model name
 
 ## License
 
