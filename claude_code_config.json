@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "codex-mcp": {
+      "command": "/path/to/codex-mcp-async/codex_mcp_server.py",
+      "args": [],
+      "env": {}
+    }
+  }
+}
