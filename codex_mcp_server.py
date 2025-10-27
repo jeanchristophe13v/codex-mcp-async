@@ -216,7 +216,7 @@ def handle_request(request: Dict[str, Any]) -> None:
                                 'args': {
                                     'type': 'array',
                                     'items': {'type': 'string'},
-                                    'description': 'Additional command-line arguments (e.g., ["--full-auto", "--sandbox", "workspace-write", "-m", "o3", "--search"])'
+                                    'description': 'Additional command-line arguments. Model selection: ["-m", "gpt-5-codex"] for coding (default) or ["-m", "gpt-5"] for analysis. Reasoning effort: ["--config", "model_reasoning_effort=low|medium|high"] (gpt-5-codex supports low/medium/high; gpt-5 supports minimal/low/medium/high). Example: ["--full-auto", "-m", "gpt-5", "--config", "model_reasoning_effort=high"]. Always include "--full-auto" for non-interactive execution.'
                                 },
                                 'timeout': {
                                     'type': 'integer',
@@ -245,7 +245,7 @@ def handle_request(request: Dict[str, Any]) -> None:
                                 'args': {
                                     'type': 'array',
                                     'items': {'type': 'string'},
-                                    'description': 'Additional command-line arguments'
+                                    'description': 'Additional command-line arguments. Model selection: ["-m", "gpt-5-codex"] for coding (default) or ["-m", "gpt-5"] for analysis. Reasoning effort: ["--config", "model_reasoning_effort=low|medium|high"] (gpt-5-codex supports low/medium/high; gpt-5 supports minimal/low/medium/high). Example: ["--full-auto", "-m", "gpt-5", "--config", "model_reasoning_effort=high"]. Always include "--full-auto" for non-interactive execution.'
                                 }
                             },
                             'required': []
