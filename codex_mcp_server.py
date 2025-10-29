@@ -390,6 +390,12 @@ def handle_request(request: Dict[str, Any]) -> None:
             }
         })
 
+    elif method == 'notifications/initialized':
+        # 这是一个通知，不需要响应（id 为 None）
+        logging.debug("Received initialized notification, no response needed")
+        # 通知不需要发送响应，直接返回
+        return
+
     elif method == 'tools/list':
         send_response({
             'jsonrpc': '2.0',
