@@ -203,12 +203,35 @@ Claude Code (receives clean result)
 - After: 200 tokens (clean result only)
 - **Savings: ~95%**
 
+## Important Notes
+
+### Git repository check
+
+The MCP server **automatically adds** `--skip-git-repo-check` to all codex commands. This allows tasks to run in `/tmp` directory without git repository errors.
+
+If you're calling codex CLI directly (outside this MCP server), add the flag manually:
+```bash
+codex exec "your prompt" --full-auto --skip-git-repo-check
+```
+
+### Required arguments
+
+Always include `--full-auto` in `args` for non-interactive execution:
+```python
+args=["--full-auto"]  # Minimum required
+args=["--full-auto", "-m", "gpt-5"]  # With model selection
+```
+
 ## Troubleshooting
 
 ### MCP server not showing up
 - Verify absolute path in config
 - Check file is executable: `chmod +x codex_mcp_server.py`
 - Restart Claude Code
+
+### Task completes in 0s with no output
+- **Fixed in v0.2.1** - The server now auto-adds `--skip-git-repo-check`
+- If using older version, update to latest release
 
 ### Task stuck in "running"
 - Wait 10s after file stops updating
@@ -232,7 +255,12 @@ Built for [Claude Code](https://claude.ai/code) ↔ [Codex](https://openai.com/c
 
 ## Version
 
-Current: **v0.2.0**
+Current: **v0.2.1**
+- Fixed async task execution in non-git directories
+- Auto-added `--skip-git-repo-check` flag to all commands
+- Resolved "Not inside a trusted directory" error
+
+Previous: **v0.2.0**
 - Async task execution
 - Zombie process fix
 - File modification time detection
