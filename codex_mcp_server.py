@@ -190,6 +190,9 @@ def start_codex_async(subcommand: str, prompt: str = None, args: List[str] = Non
     if prompt:
         cmd.append(prompt)
     cmd.extend(args)
+    # 添加 --skip-git-repo-check 避免在非 git 目录下运行失败
+    if '--skip-git-repo-check' not in cmd:
+        cmd.append('--skip-git-repo-check')
 
     # 创建任务文件
     stdout_file = task_path.with_suffix('.stdout')
@@ -355,6 +358,9 @@ def call_codex_sync(subcommand: str, prompt: str = None, args: List[str] = None,
     if prompt:
         cmd.append(prompt)
     cmd.extend(args)
+    # 添加 --skip-git-repo-check 避免在非 git 目录下运行失败
+    if '--skip-git-repo-check' not in cmd:
+        cmd.append('--skip-git-repo-check')
 
     try:
         result = subprocess.run(
