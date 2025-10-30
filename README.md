@@ -34,8 +34,8 @@ Add to your `~/.claude.json`:
 {
   "mcpServers": {
     "codex-mcp": {
-      "command": "/absolute/path/to/codex-mcp-async/codex_mcp_server.py",
-      "args": [],
+      "command": "python3",
+      "args": ["/absolute/path/to/codex-mcp-async/codex_mcp_server.py"],
       "env": {}
     }
   }
