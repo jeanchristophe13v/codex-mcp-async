@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "codex-mcp": {
+      "command": "uvx",
+      "args": [
+        "codex-mcp-async"
+      ],
+      "description": "Codex MCP Server - Execute OpenAI Codex (GPT-5) tasks asynchronously with 95% context savings"
+    }
+  }
+}

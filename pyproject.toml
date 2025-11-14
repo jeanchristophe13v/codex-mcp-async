@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codex-mcp-async"
+version = "0.2.1"
+description = "Asynchronous MCP wrapper for OpenAI Codex CLI with context filtering"
+readme = "README.md"
+license = "MIT"
+authors = [
+    {name = "jeanchristophe13v"}
+]
+maintainers = [
+    {name = "jeanchristophe13v"}
+]
+keywords = ["mcp", "openai", "codex", "claude", "gpt-5", "async"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+      "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+requires-python = ">=3.8"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "black>=22.0",
+    "isort>=5.0",
+    "flake8>=4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/jeanchristophe13v/codex-mcp-async"
+Repository = "https://github.com/jeanchristophe13v/codex-mcp-async.git"
+Issues = "https://github.com/jeanchristophe13v/codex-mcp-async/issues"
+
+[project.scripts]
+codex-mcp-async = "codex_mcp_async.server:main"
+
+[tool.setuptools]
+packages = ["codex_mcp_async"]
+
+[tool.setuptools.package-dir]
+codex_mcp_async = "src/codex_mcp_async"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
